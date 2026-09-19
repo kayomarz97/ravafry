@@ -1,0 +1,38 @@
+{
+  "hero": {
+    "hash": "7a1f4f3604c0c4f3960bf9dbdbc7be4a215af98a8508c2b8ba957a4565c1aa90",
+    "width": 854,
+    "height": 1280,
+    "widths": [
+      480,
+      854
+    ]
+  },
+  "portrait": {
+    "hash": "7b295750d2effb96ea31b9d6c085a15c4781dad6777f2241d4518d49c5590e21",
+    "width": 852,
+    "height": 1280,
+    "widths": [
+      480,
+      852
+    ]
+  },
+  "motion": {
+    "hash": "2abf1915b40a1e0b237060619866d7420d7b478dd674b180930fec0e5e672d9a",
+    "width": 1280,
+    "height": 854,
+    "widths": [
+      480,
+      1280
+    ]
+  },
+  "detail": {
+    "hash": "f048a13a7217f6c6c4d622b685a33d95381339f1591c3298f255416ac7488f0d",
+    "width": 854,
+    "height": 1280,
+    "widths": [
+      480,
+      854
+    ]
+  }
+}

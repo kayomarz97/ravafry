@@ -1,0 +1,130 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Photo from '../components/Photo.astro';
+import RsvpPanel from '../components/RsvpPanel.astro';
+import ElloraScene from '../components/ElloraScene.astro';
+
+const events = [
+  { name: 'Haldi', date: '28 Nov', time: '11 AM', calendar: '/calendar/haldi.ics' },
+  { name: 'Sangeet', date: '28 Nov', time: '6 PM', calendar: '/calendar/sangeet.ics' },
+  { name: 'Wedding', date: '29 Nov', time: '9 AM onwards', calendar: '/calendar/wedding.ics' },
+];
+---
+
+<BaseLayout
+  title="Ravina & Varad — Ellora, 28–29 November 2026"
+  description="Join Ravina and Varad for two days of celebration in Ellora, 28–29 November 2026."
+>
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <ElloraScene />
+      <div class="hero__photo" data-depth>
+        <Photo
+          name="hero"
+          alt="Ravina and Varad laughing together on a yellow scooter"
+          width={854}
+          height={1280}
+          sizes="(min-width: 64rem) 56vw, 100vw"
+          eager
+        />
+        <div class="hero__veil" aria-hidden="true"></div>
+      </div>
+
+      <div class="hero__content">
+        <p class="eyebrow">28–29 November 2026 · Ellora</p>
+        <h1 id="hero-title" aria-label="Ravina and Varad"><span>Ravina</span><i aria-hidden="true">&</i><span>Varad</span></h1>
+        <p class="invitation">Join us for two days of celebration, laughter, and togetherness.</p>
+        <div class="hero__rsvp">
+          <RsvpPanel />
+        </div>
+      </div>
+    </section>
+
+    <section class="story shell" aria-labelledby="story-title">
+      <div class="story__portrait reveal">
+        <Photo
+          name="portrait"
+          alt="Ravina and Varad smiling together"
+          width={852}
+          height={1280}
+          sizes="(min-width: 48rem) 38vw, 88vw"
+        />
+      </div>
+
+      <div class="story__copy reveal">
+        <p class="eyebrow eyebrow--dark">A weekend in Ellora</p>
+        <h2 id="story-title">Where joy finds<br />its way home.</h2>
+        <p>28–29 November 2026. All celebrations at Ellora Heritage Resort.</p>
+
+        <div class="venue-card">
+          <div>
+            <p class="eyebrow eyebrow--dark">The venue</p>
+            <h3>Ellora Heritage Resort</h3>
+            <p>Verul, Maharashtra</p>
+            <p class="venue-card__code"><strong>Plus Code</strong> 25C9+7R Ellora, Verul, Maharashtra</p>
+            <p class="venue-card__hint">Copy the location to paste into any compatible maps app.</p>
+          </div>
+          <div class="venue-card__actions">
+            <a class="text-link" href="https://maps.app.goo.gl/qro5UMtjsWSG8WXW6?g_st=ic" target="_blank" rel="noreferrer">Open in Google Maps <span aria-hidden="true">↗</span></a>
+            <button class="copy-button" type="button" data-copy="25C9+7R Ellora, Verul, Maharashtra">
+              <span data-copy-label aria-live="polite">Copy location</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="story__motion reveal">
+        <Photo
+          name="motion"
+          alt="Ravina and Varad riding through the city on a yellow scooter"
+          width={1280}
+          height={854}
+          sizes="(min-width: 48rem) 44vw, 92vw"
+        />
+      </div>
+
+      <div class="story__detail" aria-hidden="true">
+        <Photo name="detail" alt="" width={854} height={1280} sizes="18vw" desktopOnly />
+      </div>
+    </section>
+
+    <section class="schedule" aria-labelledby="schedule-title">
+      <div class="schedule__inner shell">
+        <header class="schedule__header reveal">
+          <p class="eyebrow">The celebrations</p>
+          <h2 id="schedule-title">Two days,<br />three moments.</h2>
+        </header>
+
+        <div class="events">
+          {events.map((event, index) => (
+            <article class="event reveal">
+              <span class="event__index" aria-hidden="true">0{index + 1}</span>
+              <h3>{event.name}</h3>
+              <p><time datetime={`2026-11-${event.date.startsWith('28') ? '28' : '29'}`}>{event.date}</time><span>{event.time}</span></p>
+              <p class="event__place">Ellora Heritage Resort</p>
+              <a href={event.calendar} download>Add to calendar <span aria-hidden="true">↓</span></a>
+            </article>
+          ))}
+        </div>
+
+        <div class="countdown reveal" data-countdown data-target="2026-11-28T11:00:00+05:30" role="timer" aria-live="off" aria-label="Time until the Haldi celebration">
+          <p class="eyebrow">Until we celebrate</p>
+          <div class="countdown__numbers" data-countdown-numbers>
+            <span><b data-days>—</b><small>Days</small></span>
+            <span><b data-hours>—</b><small>Hours</small></span>
+            <span><b data-minutes>—</b><small>Minutes</small></span>
+          </div>
+          <p class="countdown__begun" data-countdown-begun hidden>The celebrations have begun.</p>
+        </div>
+
+        <footer class="closing reveal">
+          <p>We can’t wait to celebrate with you. See you in Ellora.</p>
+          <span>#ravafry</span>
+        </footer>
+      </div>
+    </section>
+  </main>
+  <script>
+    import '../scripts/site';
+  </script>
+</BaseLayout>

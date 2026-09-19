@@ -1,0 +1,151 @@
+<div class="ellora-scene" data-ellora-scene data-scene-state="fallback" aria-hidden="true">
+  <svg class="ellora-scene__fallback" viewBox="0 0 100 100" preserveAspectRatio="none" focusable="false" aria-hidden="true">
+    <defs>
+      <linearGradient id="ellora-stone" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#6e665b" stop-opacity=".72" />
+        <stop offset=".48" stop-color="#24231f" stop-opacity=".78" />
+        <stop offset="1" stop-color="#11100e" stop-opacity=".9" />
+      </linearGradient>
+      <linearGradient id="ellora-warm" x1="0" y1="0" x2="0" y2="1">
+        <stop stop-color="#e3af52" stop-opacity=".5" />
+        <stop offset="1" stop-color="#d49a32" stop-opacity="0" />
+      </linearGradient>
+    </defs>
+    <g fill="none" stroke="url(#ellora-stone)" vector-effect="non-scaling-stroke">
+      <path d="M3 96V12H97V96" stroke-width="9" />
+      <path d="M10 96V18H90V96" stroke-width="6" />
+      <path d="M17 96V24H83V96" stroke-width="3" />
+    </g>
+    <g fill="url(#ellora-stone)">
+      <path d="M0 6H100V14H0zM5 15H95V20H5zM11 21H89V25H11z" />
+      <path d="M0 92H22V100H0zM78 92H100V100H78z" />
+      <path d="M1 28H8V91H1zM92 28H99V91H92z" />
+      <path d="M10 32H16V92H10zM84 32H90V92H84z" />
+      <path d="M18 37H22V93H18zM78 37H82V93H78z" />
+      <path d="M0 25H10V31H0zM8 28H18V34H8zM16 33H24V39H16zM90 25H100V31H90zM82 28H92V34H82zM76 33H84V39H76z" />
+    </g>
+    <path d="M22 26H78V36H22z" fill="url(#ellora-warm)" opacity=".48" />
+  </svg>
+</div>
+
+<script>
+  const hosts = document.querySelectorAll<HTMLElement>('[data-ellora-scene]');
+
+  hosts.forEach((host) => {
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+    let disposeScene: (() => void) | undefined;
+    let proximityObserver: IntersectionObserver | undefined;
+    let idleHandle: number | undefined;
+    let eligible = false;
+    let near = false;
+    let started = false;
+
+    const supportsWebGL = () => {
+      return typeof window.WebGL2RenderingContext === 'function'
+        && 'transferControlToOffscreen' in HTMLCanvasElement.prototype;
+    };
+
+    const cancelIdle = () => {
+      if (idleHandle === undefined) return;
+      if (typeof window.cancelIdleCallback === 'function') window.cancelIdleCallback(idleHandle);
+      else globalThis.clearTimeout(idleHandle);
+      idleHandle = undefined;
+    };
+
+    const maybeStart = async () => {
+      if (!eligible || !near || started || document.hidden || motion.matches || connection?.saveData || !supportsWebGL()) return;
+      started = true;
+      host.dataset.sceneState = 'loading';
+      try {
+        const { initElloraScene } = await import('../scripts/ellora-scene');
+        if (motion.matches || document.hidden) {
+          started = false;
+          host.dataset.sceneState = 'fallback';
+          return;
+        }
+        disposeScene = initElloraScene(host);
+      } catch {
+        started = false;
+        host.dataset.sceneState = 'fallback';
+      }
+    };
+
+    const scheduleEligibility = () => {
+      const markEligible = () => {
+        idleHandle = undefined;
+        eligible = true;
+        void maybeStart();
+      };
+      if (typeof window.requestIdleCallback === 'function') idleHandle = window.requestIdleCallback(markEligible, { timeout: 1800 });
+      else idleHandle = window.setTimeout(markEligible, 200);
+    };
+
+    const observeProximity = () => {
+      proximityObserver?.disconnect();
+      proximityObserver = new IntersectionObserver(([entry]) => {
+        near = entry?.isIntersecting ?? false;
+        if (near) void maybeStart();
+      }, { rootMargin: '35% 0px' });
+      proximityObserver.observe(host);
+    };
+
+    const stop = () => {
+      disposeScene?.();
+      disposeScene = undefined;
+      started = false;
+      host.dataset.sceneState = 'fallback';
+    };
+
+    const onMotionChange = () => {
+      if (motion.matches) stop();
+      else void maybeStart();
+    };
+    const onVisibility = () => {
+      if (!document.hidden) void maybeStart();
+    };
+    const onPageHide = () => stop();
+    const onPageShow = () => {
+      observeProximity();
+      void maybeStart();
+    };
+
+    motion.addEventListener('change', onMotionChange);
+    document.addEventListener('visibilitychange', onVisibility);
+    window.addEventListener('pagehide', onPageHide);
+    window.addEventListener('pageshow', onPageShow);
+    observeProximity();
+
+    if (document.readyState === 'complete') scheduleEligibility();
+    else window.addEventListener('load', scheduleEligibility, { once: true });
+
+    // Astro page navigation removes the host; release loader listeners as well as GPU state.
+    const removalObserver = new MutationObserver(() => {
+      if (host.isConnected) return;
+      stop();
+      cancelIdle();
+      proximityObserver?.disconnect();
+      motion.removeEventListener('change', onMotionChange);
+      document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('pagehide', onPageHide);
+      window.removeEventListener('pageshow', onPageShow);
+      removalObserver.disconnect();
+    });
+    removalObserver.observe(document.documentElement, { childList: true, subtree: true });
+  });
+</script>
+
+<style>
+  .ellora-scene { position: absolute; z-index: 1; inset: 0; overflow: hidden; pointer-events: none; }
+  .ellora-scene__fallback, :global(.ellora-scene__canvas) { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .ellora-scene__fallback { display: block; opacity: .62; filter: drop-shadow(0 .55rem .6rem rgb(0 0 0 / .32)); transition: opacity .45s ease; }
+  :global(.ellora-scene__canvas) { display: block; opacity: 0; transition: opacity .5s ease; }
+  [data-scene-state='ready'] .ellora-scene__fallback { opacity: 0; }
+  [data-scene-state='ready'] :global(.ellora-scene__canvas) { opacity: 1; }
+  @media (min-width: 64rem) {
+    .ellora-scene__fallback { opacity: .7; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ellora-scene__fallback, :global(.ellora-scene__canvas) { transition: none; }
+  }
+</style>

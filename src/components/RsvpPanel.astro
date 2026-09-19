@@ -1,0 +1,77 @@
+<section class="rsvp" data-rsvp-root>
+  <div class="rsvp__intro">
+    <p class="rsvp__eyebrow">Kindly respond</p>
+    <h2>Will you celebrate with us?</h2>
+    <p>Your stay is already provided. Tell us who is coming and anything the kitchen should know.</p>
+    <button class="rsvp__open" type="button" data-rsvp-open aria-expanded="false" aria-controls="rsvp-panel">RSVP</button>
+  </div>
+
+  <div class="rsvp__panel" id="rsvp-panel" data-rsvp-panel hidden role="region" aria-labelledby="rsvp-title">
+    <button class="rsvp__close" type="button" data-rsvp-close aria-label="Close RSVP form">×</button>
+    {import.meta.env.DEV && import.meta.env.PUBLIC_RSVP_MODE === 'mock' && <p class="rsvp__preview">Preview only — responses are not sent.</p>}
+    <h2 id="rsvp-title" tabindex="-1">Your RSVP</h2>
+    <div data-rsvp-app></div>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-rsvp-root]');
+  const panel = root?.querySelector<HTMLElement>('[data-rsvp-panel]');
+  const trigger = root?.querySelector<HTMLButtonElement>('[data-rsvp-open]');
+  // Expand beneath the hero without stretching the photograph.
+  const hero = root?.closest('.hero');
+  if (hero && panel) hero.insertAdjacentElement('afterend', panel);
+  let loaded = false;
+  trigger?.addEventListener('click', async () => {
+    if (panel) panel.hidden = false;
+    trigger.setAttribute('aria-expanded', 'true');
+    if (!loaded && panel) {
+      loaded = true;
+      try {
+        const { initRsvp } = await import('../scripts/rsvp');
+        await initRsvp(panel);
+      } catch {
+        loaded = false;
+        const app = panel.querySelector<HTMLElement>('[data-rsvp-app]');
+        if (app) app.innerHTML = '<p role="alert">The RSVP form could not load. Close it and try again.</p>';
+      }
+    }
+    panel?.querySelector<HTMLElement>('#rsvp-title')?.focus();
+  });
+  panel?.querySelector('[data-rsvp-close]')?.addEventListener('click', () => {
+    if (panel) panel.hidden = true;
+    trigger?.setAttribute('aria-expanded', 'false');
+    trigger?.focus();
+  });
+</script>
+
+<style>
+  .rsvp { --ink: var(--color-ink, #24231f); --paper: var(--color-paper, #f2ebdd); --gold: var(--color-accent, #d49a32); color: var(--ink); }
+  .rsvp__intro { max-width: 42rem; margin-inline: auto; padding: 0; text-align: inherit; }
+  .rsvp__eyebrow { color: var(--gold); font-size: .78rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+  .rsvp h2, .rsvp__panel h2 { margin: .4rem 0 1rem; font: 400 clamp(2rem, 6vw, 4rem)/1.05 var(--serif, Georgia, serif); }
+  .rsvp__open, :global([data-rsvp-app] button[type="submit"]) { border: 1px solid var(--ink); background: var(--ink); color: var(--paper); cursor: pointer; padding: .85rem 1.4rem; letter-spacing: .08em; text-transform: uppercase; min-height: 44px; }
+  .rsvp__open { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+  .rsvp__panel { text-align: left; }
+  :global([data-rsvp-app] button) { min-height: 44px; }
+  :global([data-rsvp-app] fieldset), :global([data-rsvp-app] label), :global([data-rsvp-app] input), :global([data-rsvp-app] select) { min-width: 0; }
+  .rsvp__panel { --ink: var(--color-ink, #24231f); --paper: var(--color-paper, #f2ebdd); --gold: var(--color-accent, #d49a32); position: relative; box-sizing: border-box; width: min(44rem, calc(100% - 1.5rem)); margin: 2rem auto; border: 1px solid rgb(36 35 31 / .2); background: var(--paper); color: var(--ink); padding: clamp(1.25rem, 5vw, 3rem); }
+  .rsvp__panel[hidden] { display: none; }
+  .rsvp__close { position: absolute; top: .75rem; right: .85rem; border: 0; background: transparent; color: inherit; cursor: pointer; font-size: 2rem; }
+  .rsvp__preview { border-left: 3px solid var(--gold); margin: 0 2rem 1.5rem 0; padding: .45rem .75rem; font-size: .9rem; }
+  :global([data-rsvp-app] form) { display: grid; gap: 1rem; }
+  :global([data-rsvp-app] label), :global([data-rsvp-app] fieldset) { display: grid; gap: .4rem; }
+  :global([data-rsvp-app] input), :global([data-rsvp-app] select), :global([data-rsvp-app] textarea) { box-sizing: border-box; width: 100%; border: 1px solid rgb(36 35 31 / .35); border-radius: 0; background: rgb(255 255 255 / .38); color: inherit; font: inherit; padding: .75rem; }
+  :global([data-rsvp-app] fieldset) { border: 1px solid rgb(36 35 31 / .2); margin: 0; padding: 1rem; }
+  :global([data-rsvp-app] .phone-row) { display: grid; grid-template-columns: minmax(9rem, 1fr) minmax(10rem, 1.5fr); gap: .6rem; }
+  :global([data-rsvp-app] .choice) { display: flex; flex-wrap: wrap; gap: 1rem; }
+  :global([data-rsvp-app] .choice label) { display: flex; grid-template-columns: auto 1fr; align-items: center; }
+  :global([data-rsvp-app] .choice input) { width: auto; }
+  :global([data-rsvp-app] .fixture-row) { display: flex; flex-wrap: wrap; gap: .5rem; }
+  :global([data-rsvp-app] .fixture-row button), :global([data-rsvp-app] .secondary) { border: 1px solid currentColor; background: transparent; color: inherit; cursor: pointer; padding: .55rem .75rem; }
+  :global([data-rsvp-app] .form-error) { color: #8b271f; font-weight: 600; }
+  :global([data-rsvp-app] .guest) { position: relative; }
+  :global([data-rsvp-app] .guest .remove) { justify-self: start; }
+  :global([data-rsvp-app] .actions) { display: flex; align-items: center; gap: .75rem; }
+  @media (max-width: 34rem) { :global([data-rsvp-app] .phone-row) { grid-template-columns: 1fr; } }
+</style>
