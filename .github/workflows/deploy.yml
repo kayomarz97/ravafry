@@ -33,5 +33,14 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           wranglerVersion: '4.135.0'
+          secrets: |
+            TURNSTILE_SECRET_KEY
+            RSVP_UPSTREAM_URL
+            RSVP_SHARED_SECRET
+            RSVP_SESSION_SECRET
         env:
           WRANGLER_SEND_METRICS: 'false'
+          TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
+          RSVP_UPSTREAM_URL: ${{ secrets.RSVP_UPSTREAM_URL }}
+          RSVP_SHARED_SECRET: ${{ secrets.RSVP_SHARED_SECRET }}
+          RSVP_SESSION_SECRET: ${{ secrets.RSVP_SESSION_SECRET }}

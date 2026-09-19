@@ -25,6 +25,9 @@
     }
   ],
   "vars": {
-    "RSVP_API_ENABLED": "false"
+    "RSVP_API_ENABLED": "true",
+    "RSVP_ALLOWED_ORIGIN": "https://ravafry.kayomarz97.workers.dev",
+    "RSVP_TURNSTILE_HOSTNAME": "ravafry.kayomarz97.workers.dev",
+    "TURNSTILE_SITE_KEY": "0x4AAAAAAE9MHNQkWCdapyiv"
   }
 }
