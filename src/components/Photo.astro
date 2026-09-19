@@ -1,0 +1,45 @@
+---
+interface Props {
+  name: 'hero' | 'portrait' | 'motion' | 'detail';
+  alt: string;
+  width: number;
+  height: number;
+  class?: string;
+  sizes?: string;
+  eager?: boolean;
+  desktopOnly?: boolean;
+}
+
+const {
+  name,
+  alt,
+  width,
+  height,
+  class: className,
+  sizes = '100vw',
+  eager = false,
+  desktopOnly = false,
+} = Astro.props;
+const fullWidth = name === 'portrait' ? 852 : name === 'motion' ? 1280 : 854;
+const media = desktopOnly ? '(min-width: 64rem)' : undefined;
+const srcset = (format: string) =>
+  `/images/${name}-480.${format} 480w, /images/${name}-${fullWidth}.${format} ${fullWidth}w`;
+const transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+---
+
+<picture class:list={['photo', className]}>
+  <source media={media} type="image/avif" srcset={srcset('avif')} sizes={sizes} />
+  <source media={media} type="image/webp" srcset={srcset('webp')} sizes={sizes} />
+  {desktopOnly && <source media={media} type="image/jpeg" srcset={srcset('jpg')} sizes={sizes} />}
+  <img
+    src={desktopOnly ? transparentPixel : `/images/${name}-${fullWidth}.jpg`}
+    srcset={desktopOnly ? undefined : srcset('jpg')}
+    sizes={desktopOnly ? undefined : sizes}
+    alt={alt}
+    width={width}
+    height={height}
+    loading={eager ? 'eager' : 'lazy'}
+    fetchpriority={eager ? 'high' : 'auto'}
+    decoding={eager ? 'sync' : 'async'}
+  />
+</picture>
