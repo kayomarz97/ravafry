@@ -23,7 +23,7 @@ if (heroes.length !== 1) throw new Error('Expected exactly one original named he
 const selection = [
   ['hero', heroes[0]],
   ['portrait', 'IMG-20260918-WA0062.jpg'],
-  ['motion', 'IMG-20260918-WA0064.jpg'],
+  ['motion', 'TTK07539.jpeg'],
   ['detail', 'IMG-20260918-WA0066.jpg'],
 ];
 const pipeline = 'warm-stone-v1';
@@ -32,17 +32,27 @@ try { previous = JSON.parse(await readFile(path.join(images, 'manifest.json'), '
 const manifest = {};
 for (const [name, filename] of selection) {
   const input = await readFile(path.join(root, 'photos', filename));
-  const hash = createHash('sha256').update(input).update(pipeline).digest('hex');
+  const hash = createHash('sha256').update(input).update(pipeline)
+    .update(name === 'motion' ? 'beach-bottom-1280x854-v1' : '').digest('hex');
   const meta = await sharp(input).metadata();
-  const width = meta.autoOrient?.width ?? meta.width;
-  const height = meta.autoOrient?.height ?? meta.height;
-  if (!width || !height) throw new Error(`Missing dimensions: ${filename}`);
+  const sourceWidth = meta.autoOrient?.width ?? meta.width;
+  const sourceHeight = meta.autoOrient?.height ?? meta.height;
+  if (!sourceWidth || !sourceHeight) throw new Error(`Missing dimensions: ${filename}`);
+  // The beach portrait has a large sky. Keep the full-width lower frame so
+  // both people, their joined hands and feet remain inside the landscape crop.
+  const cropHeight = Math.min(sourceHeight, Math.round(sourceWidth * 854 / 1280));
+  const crop = name === 'motion'
+    ? { left: 0, top: sourceHeight - cropHeight, width: sourceWidth, height: cropHeight }
+    : undefined;
+  const width = name === 'motion' ? Math.min(1280, sourceWidth) : sourceWidth;
+  const height = crop ? Math.round(crop.height * width / sourceWidth) : sourceHeight;
   const widths = [...new Set([Math.min(480, width), width])];
   const outputs = widths.flatMap((size) => ['avif', 'webp', 'jpg'].map((ext) => `${name}-${size}.${ext}`));
   const exists = await Promise.all(outputs.map((file) => access(path.join(images, file)).then(() => true, () => false)));
   if (previous[name]?.hash !== hash || exists.some((found) => !found)) {
     for (const size of widths) {
-      const base = sharp(input).rotate().resize({ width: size, withoutEnlargement: true })
+      const oriented = sharp(input).rotate();
+      const base = (crop ? oriented.extract(crop) : oriented).resize({ width: size, withoutEnlargement: true })
         .modulate({ saturation: 0.88, brightness: 1.01 })
         .recomb([[1.015, 0, 0], [0, 1, 0], [0, 0, 0.985]]);
       // Sharp strips metadata by default; never call withMetadata/keepMetadata.
