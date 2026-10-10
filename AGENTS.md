@@ -35,3 +35,4 @@
 - Keep Three.js context creation and rendering in the OffscreenCanvas worker: the main-thread prototype caused a multi-second input-blocking startup in the VPS mobile audit.
 - Three.js instanced colours do not require `vertexColors: true`; enable vertex colours only when geometry has an actual colour attribute, otherwise the stone can render black.
 - Astro background-server state can differ across sandbox boundaries. Inspect the exact project PID and listening port before restarting; use the printed port, and do not append a second `--port` to a script already specifying one.
+- Preserve the story photos' aspect ratios across breakpoints. Check that crops and overlapping frames do not hide faces, rings, nails or joined hands; inspect mobile and desktop before publishing photo-layout changes.
