@@ -1,0 +1,57 @@
+---
+const looks = [
+  {
+    id: 'haldi', name: 'Haldi Carnival', date: '28 November',
+    men: 'Kurtas, Indo-western sets or co-ords in breathable fabrics.',
+    women: 'Flowy dresses, jumpsuits or co-ords in easy, festive styles.',
+    colors: [{ name: 'Pastel pink', hex: '#f5b6ba' }, { name: 'Powder blue', hex: '#bac4ca' }, { name: 'Sage', hex: '#cccda5' }],
+  },
+  {
+    id: 'sangeet', name: 'Sangeet Night', date: '28 November',
+    men: 'Tuxedos, blazers or sharp formals.',
+    women: 'Shimmer gowns, lehengas, glam co-ords or evening wear.',
+    colors: [{ name: 'Gold', hex: '#bd8c44' }, { name: 'Black', hex: '#000000' }, { name: 'Midnight navy', hex: '#101f36' }],
+  },
+  {
+    id: 'wedding', name: 'Wedding Day', date: '29 November',
+    men: 'Elegant kurtas with pyjamas or dhotis.',
+    women: 'Nauvari with traditional jewellery.',
+    colors: [{ name: 'Blush', hex: '#e6b9b4' }, { name: 'Ivory', hex: '#e4d4bc' }, { name: 'Warm gold', hex: '#f1ce89' }],
+  },
+];
+---
+
+<section class="wardrobe" id="wardrobe" aria-labelledby="wardrobe-title">
+  <div class="shell">
+    <header class="wardrobe__header reveal">
+      <div>
+        <p class="eyebrow eyebrow--dark">A little outfit inspiration</p>
+        <h2 id="wardrobe-title">Wardrobe planner</h2>
+      </div>
+      <p>Outfit ideas and colours for each celebration.</p>
+    </header>
+
+    <div class="wardrobe__looks">
+      {looks.map((look, index) => (
+        <article class="wardrobe-look reveal" aria-labelledby={`wardrobe-${look.id}`}>
+          <div class="wardrobe-look__body">
+            <p class="eyebrow wardrobe-look__date">{look.date} · {index === 2 ? 'Sunday' : 'Saturday'}</p>
+            <h3 id={`wardrobe-${look.id}`}>{look.name}</h3>
+            <dl class="wardrobe-look__outfits">
+              <div><dt>For men</dt><dd>{look.men}</dd></div>
+              <div><dt>For women</dt><dd>{look.women}</dd></div>
+            </dl>
+            <div class="wardrobe-look__palette">
+              <p class="eyebrow">Suggested colours</p>
+              <ul aria-label={`${look.name} colour inspiration`}>
+                {look.colors.map((color) => (
+                  <li><span class="wardrobe-look__swatch" style={`--swatch: ${color.hex}`} aria-hidden="true"></span><span>{color.name}</span></li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

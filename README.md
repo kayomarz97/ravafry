@@ -4,7 +4,9 @@ Wedding invitation, 28–29 November 2026 at Ellora Heritage Resort. English, wa
 
 ## Current checkpoint
 
-Checkpoint 5: API-backed frontend, Cloudflare Worker, opaque sessions, rate limits, Apps Script and Sheet adapter implemented. Google endpoint version 2 and refreshed Sheet passed all 11 live integration checks on 20 September 2026. One labelled declined fictional test party remains. Public repository: [kayomarz97/ravafry](https://github.com/kayomarz97/ravafry). Cloudflare runtime and production Turnstile verification are still pending. No Cloudflare website has been published. Do not collect real guest responses yet.
+Production hosting: [open invitation](https://ravafry.com). The dedicated ravafry Worker is deployed with root/www HTTPS custom domains; deployed static/API negative smoke checks passed. Successful human Turnstile and full browser-to-Sheet RSVP acceptance still need production inspection before sharing with guests.
+
+Checkpoint 5: API-backed frontend, Cloudflare Worker, opaque sessions, rate limits, Apps Script and Sheet adapter implemented. Google endpoint version 2 and refreshed Sheet passed all 11 live integration checks on 20 September 2026. One labelled declined fictional test party remains. Public repository: [kayomarz97/ravafry](https://github.com/kayomarz97/ravafry). This was the pre-deployment checkpoint; see the current hosting and acceptance status above.
 
 Approved: maximum 10 additional guests (11 attendees total), Haldi countdown, RSVP stays open, group attendance managed by the primary guest. Invitation: “Join us for two days of celebration, laughter, and togetherness.” Closing: “We can’t wait to celebrate with you. See you in Ellora.”
 
@@ -35,6 +37,14 @@ Local verification uses Chromium software WebGL on this headless VPS; it does no
 Originals in ignored `photos/` are never overwritten, renamed or moved. Exactly one image must use basename `hero` (extension detected). `scripts/assets.mjs` selects hero and supporting 0062, 0064, 0066; rotates from EXIF, applies a restrained warm grade, strips metadata, and emits responsive AVIF/WebP/JPEG under `public/images/`. Source hashes avoid repeating image encoding when unchanged. Never upscale these modest-resolution originals. Keep a separate backup of originals; they are intentionally absent from Git.
 
 Self-hosted Cormorant Garamond and Manrope WOFF2 files and licenses are copied from pinned Fontsource packages. Sanitized photo derivatives and their dimension manifest are committed for reproducible CI; originals, generated fonts and calendars remain ignored. Edit the generator, not its outputs. Use `npm run build` on the VPS to regenerate photos after changes, then commit only the sanitized derivatives. On a clone without originals, use `npm run build:ci`; it validates existing photo assets and generates fonts/calendar before building.
+
+## Wardrobe planner
+
+`src/components/WardrobePlanner.astro` adds a simple text-only outfit guide between the story and celebrations, with a hero shortcut. Outfit guidance comes from `Wardrobe Planner_Ravafry.pdf`: Haldi pastels, Sangeet gold/black/navy, and traditional Maharashtrian wedding attire in blush/ivory/warm gold. Colour names describe the PDF's unlabelled swatches; gold is a representative tone for its textured gold sample.
+
+The wardrobe uses native HTML text and labelled colour swatches, with a consistent parchment background. It includes no generated photographs or image dependencies, and remains readable without JavaScript.
+
+The planner lists Sangeet at 8 PM while the existing invitation/calendar say 6 PM. Wardrobe cards intentionally show dates only; confirm the event time before changing both the schedule and calendar generator.
 
 ## GitHub deployment
 
@@ -104,4 +114,4 @@ Page content/layout: `src/pages/index.astro`, styling: `src/styles/global.css`, 
 
 Missing images/fonts: run `npm run assets` after `npm ci`, check original filenames. Missing fixture changes after reload: expected in-memory behavior. Network install failures: verify registry access; do not assume authentication is broken from sandbox DNS failure. Stale conflict: reload the saved mock response before editing again.
 
-Noindex is included in HTML and a header template. It is not access control. `robots.txt` permits crawling so crawlers can read the noindex directive. The final Worker must apply noindex headers; Workers Static Assets do not automatically use a Pages `_headers` file for dynamic routes. No real domain is configured. See DOMAIN_SETUP.md.
+Noindex is included in HTML and a header template. It is not access control. `robots.txt` permits crawling so crawlers can read the noindex directive. The final Worker must apply noindex headers; Workers Static Assets do not automatically use a Pages `_headers` file for dynamic routes. The canonical domain is ravafry.com; www and the temporary workers.dev address redirect to it. See DOMAIN_SETUP.md.

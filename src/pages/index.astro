@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Photo from '../components/Photo.astro';
 import RsvpPanel from '../components/RsvpPanel.astro';
 import ElloraScene from '../components/ElloraScene.astro';
+import WardrobePlanner from '../components/WardrobePlanner.astro';
 
 const events = [
   { name: 'Haldi', date: '28 Nov', time: '11 AM', calendar: '/calendar/haldi.ics' },
@@ -37,6 +38,7 @@ const events = [
         <div class="hero__rsvp">
           <RsvpPanel />
         </div>
+        <a class="hero__wardrobe-link" href="#wardrobe">Explore the wardrobe <span aria-hidden="true">↓</span></a>
       </div>
     </section>
 
@@ -87,6 +89,8 @@ const events = [
         <Photo name="detail" alt="" width={854} height={1280} sizes="18vw" desktopOnly />
       </div>
     </section>
+
+    <WardrobePlanner />
 
     <section class="schedule" aria-labelledby="schedule-title">
       <div class="schedule__inner shell">
