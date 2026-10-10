@@ -14,8 +14,8 @@ pass('invitation, noindex and absolute social metadata');
 assert.match(html, /Wardrobe planner/);
 assert.equal(html.includes('/images/wardrobe/'), false);
 pass('simple wardrobe guidance without generated photos');
-for (const host of ['www.ravafry.com', 'ravafry.kayomarz97.workers.dev']) {
-  const redirect = await fetch(`https://${host}/calendar/haldi.ics?download=1`, { redirect: 'manual' });
+for (const alias of ['https://www.ravafry.com', 'https://ravafry.kayomarz97.workers.dev', 'http://ravafry.com', 'http://www.ravafry.com']) {
+  const redirect = await fetch(`${alias}/calendar/haldi.ics?download=1`, { redirect: 'manual' });
   assert.equal(redirect.status, 308);
   assert.equal(redirect.headers.get('location'), origin + '/calendar/haldi.ics?download=1');
 }

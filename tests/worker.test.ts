@@ -202,15 +202,15 @@ test('static assets inherit noindex without exposing API cache behavior', async 
 
 test('canonical domain redirects alias navigation while preserving paths and queries', async () => {
   const env = { ...baseEnv(), RSVP_ALLOWED_ORIGIN: 'https://ravafry.com', RSVP_TURNSTILE_HOSTNAME: 'ravafry.com' };
-  for (const hostname of ['www.ravafry.com', 'ravafry.kayomarz97.workers.dev']) {
+  for (const origin of ['https://www.ravafry.com', 'https://ravafry.kayomarz97.workers.dev', 'http://ravafry.com']) {
     for (const method of ['GET', 'HEAD']) {
-      const response = await createWorker().fetch(new Request(`https://${hostname}/calendar/haldi.ics?download=1`, { method }), env);
+      const response = await createWorker().fetch(new Request(`${origin}/calendar/haldi.ics?download=1`, { method }), env);
       assert.equal(response.status, 308);
       assert.equal(response.headers.get('location'), 'https://ravafry.com/calendar/haldi.ics?download=1');
       assert.equal(response.headers.get('set-cookie'), null);
       assert.match(response.headers.get('x-robots-tag')!, /noindex/);
     }
-    const response = await createWorker().fetch(new Request(`https://${hostname}/api/rsvp/save`, { method: 'POST', body: '{}' }), env);
+    const response = await createWorker().fetch(new Request(`${origin}/api/rsvp/save`, { method: 'POST', body: '{}' }), env);
     assert.equal(response.status, 421);
     assert.equal(response.headers.get('location'), null);
     assert.equal(response.headers.get('cache-control'), 'no-store');

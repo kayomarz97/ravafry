@@ -4,7 +4,7 @@ Canonical invitation: **https://ravafry.com**. The existing Cloudflare zone is a
 
 `wrangler.jsonc` attaches `ravafry.com` and `www.ravafry.com` to the dedicated `ravafry` Worker using Cloudflare Custom Domains. Cloudflare manages their DNS and HTTPS certificates. Do not add a CNAME pointing to workers.dev; use the custom-domain configuration. See [Cloudflare Custom Domains](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/).
 
-The Worker permanently redirects GET/HEAD requests from `www.ravafry.com` and `ravafry.kayomarz97.workers.dev` to the root domain, preserving path and query. Other methods on those aliases return 421 rather than forwarding RSVP bodies. The main domain serves the invitation and same-origin API.
+The Worker permanently redirects GET/HEAD requests from `www.ravafry.com`, `ravafry.kayomarz97.workers.dev` and plain HTTP on the root domain to `https://ravafry.com`, preserving path and query. Other methods on those aliases or plain HTTP return 421 rather than forwarding RSVP bodies. The secure main domain serves the invitation and same-origin API.
 
 `astro.config.mjs` sets canonical and absolute Open Graph URLs. Worker variables `RSVP_ALLOWED_ORIGIN` and `RSVP_TURNSTILE_HOSTNAME` use `https://ravafry.com` and `ravafry.com` respectively. The existing Turnstile widget must include `ravafry.com` in its allowed domains; preserve its mode and keys when updating it. Noindex HTML and response headers remain enabled.
 

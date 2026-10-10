@@ -4,9 +4,9 @@ Wedding invitation, 28–29 November 2026 at Ellora Heritage Resort. English, wa
 
 ## Current checkpoint
 
-Production inspection (Checkpoint 6): [open invitation](https://ravafry.com). Domain configuration targets the dedicated ravafry Worker; deployed static/API negative smoke checks passed. Successful human Turnstile and full browser-to-Sheet RSVP acceptance still need production inspection before sharing with guests.
+Production hosting: [open invitation](https://ravafry.com). The dedicated ravafry Worker is deployed with root/www HTTPS custom domains; deployed static/API negative smoke checks passed. Successful human Turnstile and full browser-to-Sheet RSVP acceptance still need production inspection before sharing with guests.
 
-Checkpoint 5: API-backed frontend, Cloudflare Worker, opaque sessions, rate limits, Apps Script and Sheet adapter implemented. Google endpoint version 2 and refreshed Sheet passed all 11 live integration checks on 20 September 2026. One labelled declined fictional test party remains. Public repository: [kayomarz97/ravafry](https://github.com/kayomarz97/ravafry). Cloudflare runtime and production Turnstile verification are still pending. No Cloudflare website has been published. Do not collect real guest responses yet.
+Checkpoint 5: API-backed frontend, Cloudflare Worker, opaque sessions, rate limits, Apps Script and Sheet adapter implemented. Google endpoint version 2 and refreshed Sheet passed all 11 live integration checks on 20 September 2026. One labelled declined fictional test party remains. Public repository: [kayomarz97/ravafry](https://github.com/kayomarz97/ravafry). This was the pre-deployment checkpoint; see the current hosting and acceptance status above.
 
 Approved: maximum 10 additional guests (11 attendees total), Haldi countdown, RSVP stays open, group attendance managed by the primary guest. Invitation: “Join us for two days of celebration, laughter, and togetherness.” Closing: “We can’t wait to celebrate with you. See you in Ellora.”
 
