@@ -307,6 +307,16 @@ export function createWorker(dependencies: WorkerDependencies = {}) {
   return {
     async fetch(request: Request, env: Env): Promise<Response> {
       const url = new URL(request.url);
+      if (env.RSVP_ALLOWED_ORIGIN === 'https://ravafry.com' &&
+          ['www.ravafry.com', 'ravafry.kayomarz97.workers.dev'].includes(url.hostname)) {
+        // Navigate to the canonical host; never forward an RSVP body or cookie.
+        if (request.method !== 'GET' && request.method !== 'HEAD') {
+          return failure(421, 'wrong_host', 'Please open ravafry.com to submit your RSVP.');
+        }
+        url.protocol = 'https:';
+        url.host = 'ravafry.com';
+        return new Response(null, { status: 308, headers: responseHeaders({ Location: url.href }) });
+      }
       if (!url.pathname.startsWith('/api/rsvp/')) {
         const asset = await env.ASSETS.fetch(request);
         const headers = new Headers(asset.headers);

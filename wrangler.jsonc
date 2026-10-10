@@ -5,6 +5,10 @@
   "compatibility_date": "2026-09-19",
   "workers_dev": true,
   "preview_urls": false,
+  "routes": [
+    { "pattern": "ravafry.com", "custom_domain": true },
+    { "pattern": "www.ravafry.com", "custom_domain": true }
+  ],
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
@@ -26,8 +30,8 @@
   ],
   "vars": {
     "RSVP_API_ENABLED": "true",
-    "RSVP_ALLOWED_ORIGIN": "https://ravafry.kayomarz97.workers.dev",
-    "RSVP_TURNSTILE_HOSTNAME": "ravafry.kayomarz97.workers.dev",
+    "RSVP_ALLOWED_ORIGIN": "https://ravafry.com",
+    "RSVP_TURNSTILE_HOSTNAME": "ravafry.com",
     "TURNSTILE_SITE_KEY": "0x4AAAAAAE9MHNQkWCdapyiv"
   }
 }

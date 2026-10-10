@@ -1,15 +1,17 @@
-# Domain setup — deferred
+# ravafry.com
 
-No domain has been purchased or supplied. Do not invent one. Initial production deployment will use the actual Cloudflare `workers.dev` address at Checkpoint 6.
+Canonical invitation: **https://ravafry.com**. The existing Cloudflare zone is active, with authoritative nameservers `elmo.ns.cloudflare.com` and `sandy.ns.cloudflare.com`. No registrar or nameserver migration is needed.
 
-When a domain is supplied at Checkpoint 8:
+`wrangler.jsonc` attaches `ravafry.com` and `www.ravafry.com` to the dedicated `ravafry` Worker using Cloudflare Custom Domains. Cloudflare manages their DNS and HTTPS certificates. Do not add a CNAME pointing to workers.dev; use the custom-domain configuration. See [Cloudflare Custom Domains](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/).
 
-1. Verify domain ownership and attach it to the deployed Worker using Cloudflare's current custom-domain flow.
-2. Choose root or www as canonical; redirect the other host with a permanent redirect preserving path/query.
-3. Verify HTTPS and certificates on both names.
-4. Set canonical, absolute Open Graph image/page URLs and the production origin. Keep noindex HTML and headers.
-5. Update Turnstile hostname restrictions and server-side expected hostname/origin checks.
-6. Verify cookie scope, session creation, primary/additional updates, private no-store responses and Sheet writes on the new hostname.
-7. Smoke-test responsive photos, countdown, calendar downloads, Google Maps and location copy. Check that no unexpected public RSVP routes or indexable pages exist.
+The Worker permanently redirects GET/HEAD requests from `www.ravafry.com` and `ravafry.kayomarz97.workers.dev` to the root domain, preserving path and query. Other methods on those aliases return 421 rather than forwarding RSVP bodies. The main domain serves the invitation and same-origin API.
 
-Keep the temporary URL behavior explicit (redirect or retain intentionally) and document the final production URL in README. Never place private RSVP data in metadata or domain configuration.
+`astro.config.mjs` sets canonical and absolute Open Graph URLs. Worker variables `RSVP_ALLOWED_ORIGIN` and `RSVP_TURNSTILE_HOSTNAME` use `https://ravafry.com` and `ravafry.com` respectively. The existing Turnstile widget must include `ravafry.com` in its allowed domains; preserve its mode and keys when updating it. Noindex HTML and response headers remain enabled.
+
+## Verification
+
+Run offline checks before publishing: `npm run typecheck`, `npm test`, `npm run build:ci`, `npm run build:apps-script` and `npm run test:browser:live`. Browser checks intercept RSVP/Turnstile requests.
+
+After deployment, run `node scripts/test-production.mjs --live`. It checks the invitation, text-only wardrobe, HTTPS redirects, calendar/photo downloads, noindex, no-store responses and rejection of unauthenticated/invalid requests. It never submits a valid RSVP or reads guest data. Successful human Turnstile, session creation and primary/additional RSVP updates still require browser acceptance testing on the canonical domain; negative smoke checks do not establish those flows.
+
+Keep runtime secrets in the existing Worker and ignored local `.env`; never put them in domain configuration or metadata. Future GitHub deployments must retain these domain and origin settings.
