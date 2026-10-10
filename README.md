@@ -38,6 +38,8 @@ Originals in ignored `photos/` are never overwritten, renamed or moved. Exactly 
 
 Self-hosted Cormorant Garamond and Manrope WOFF2 files and licenses are copied from pinned Fontsource packages. Sanitized photo derivatives and their dimension manifest are committed for reproducible CI; originals, generated fonts and calendars remain ignored. Edit the generator, not its outputs. Use `npm run build` on the VPS to regenerate photos after changes, then commit only the sanitized derivatives. On a clone without originals, use `npm run build:ci`; it validates existing photo assets and generates fonts/calendar before building.
 
+The smiling portrait renders at its original proportions, without a fixed-height crop. On mobile it fills the story width and the beach photograph has its own row, keeping Ravina's ring, nails and mehendi unobstructed. Desktop retains the adjacent photo-and-venue layout with the complete portrait visible.
+
 ## Wardrobe planner
 
 `src/components/WardrobePlanner.astro` adds a simple text-only outfit guide between the story and celebrations, with a hero shortcut. Outfit guidance comes from `Wardrobe Planner_Ravafry.pdf`: Haldi pastels, Sangeet gold/black/navy, and traditional Maharashtrian wedding attire in blush/ivory/warm gold. Colour names describe the PDF's unlabelled swatches; gold is a representative tone for its textured gold sample.
